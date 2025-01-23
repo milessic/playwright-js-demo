@@ -9,7 +9,6 @@ This is a demo of implementing [Playwright](https://playwright.dev/) simple fram
 2. Install and init playwright with npm
 ```
 npm init playwright@latest
-npm init playwright@latest
 ```
 3. Run tests
 ```
