@@ -1,7 +1,7 @@
 # Playwright demo
 Miłosz Jura, 2025
 ## Introduction
-This is a demo of implementing [Playwright](https://playwright.dev/) simple framework and tests for [Writer.js](https://github.com/alirezakefayati/writer.js/) application, that was also built by me :)
+This is a demo of implementing [Playwright](https://playwright.dev/) simple framework and tests for [Write.JS](https://writejs.bieda.it/) application, that was also built by me :)
 
 
 ## Environment setup
