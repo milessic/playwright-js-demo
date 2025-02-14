@@ -12,3 +12,17 @@ export const editor = {
 	'editor': '#editor'
 }
 
+
+export const modals = {
+	"close": "#modal  .close-button"
+}
+
+export const cookieModal = {
+	"agree": `//div[@class="modal-bottom"]//button[text()="Yes"]`,
+	"disagree": `//div[@class="modal-bottom"]//button[text()="No"]`
+}
+
+export const notifications = {
+	"notificationContainer": ".notification-container",
+	"notificationText": ".notification-text"
+}
