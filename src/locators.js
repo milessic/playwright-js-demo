@@ -19,7 +19,11 @@ export const modals = {
 
 export const cookieModal = {
 	"agree": `//div[@class="modal-bottom"]//button[text()="Yes"]`,
-	"disagree": `//div[@class="modal-bottom"]//button[text()="No"]`
+	"disagree": `//div[@class="modal-bottom"]//button[text()="No"]`,
+	login: {
+		login: "#login",
+		password: "#password"
+	}
 }
 
 export const notifications = {

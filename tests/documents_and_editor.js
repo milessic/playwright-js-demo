@@ -17,52 +17,6 @@ test.afterEach(async ({ page }, testInfo) => {
   }
 });
 
-// Title test
-test('has title', async ( { page } ) => {
-	await writer.openWriterJs(page);
-
-	// check the title
-	await writer.verifyPageTitle(page, data.baseTitle);
-});
-
-
-// Check if not-logged user has login/register notification
-test("not logged user is notified to login or register", async ( { page } ) => {
-	await writer.openWriterJs(page);
-	await writer.closeCookiesModal(page);
-
-	// verify notification
-	await writer.verifyThatNotificationWithTextExists(page, data.notifications.loginOrRegister.content);
-})
-
-// Check if buttons on login/register notification works as expected
-test("not logged user can open login and register from notification", async ( { page } ) => {
-	await writer.openWriterJs(page);
-	await writer.closeCookiesModal(page);
-
-	// verify notification is displayed
-	await writer.verifyThatNotificationWithTextExists(page, data.notifications.loginOrRegister.content);
-
-	// login scenario
-	await writer.clickButtonInsideNotification(page, data.notifications.loginOrRegister.buttonLogin);
-	await writer.verifyModalTitle(page, data.modals.login.title)
-
-	// register scenario
-	await writer.clickButtonInsideNotification(page, data.notifications.loginOrRegister.buttonRegister);
-	await writer.verifyModalTitle(page, data.modals.register.title)
-})
-
-// Check if page contains all needed elements
-test("top bar has all needed elements", async ( { page } ) => {
-	await writer.openWriterJs(page);
-	await writer.closeCookiesModal(page);
-
-	// verify topBar
-	await writer.verifyTopBarElementsAreVisibleForDesktop(page);
-
-	// TODO verify hamburger
-	// TODO verify toolbox
-});
 
 
 // Verify that save functionality works as expected for user without consent

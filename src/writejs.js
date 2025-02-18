@@ -101,7 +101,6 @@ export async function getNotificationCount(page, waitForFirst=true){
 		await page.locator(locators.notifications.notificationContainer).first().waitFor({ state: "attached" });
 	}
 	const count = await page.locator(locators.notifications.notificationContainer).count()
-	console.log(`Found ${count} notifications`)
 	return count
 }
 
