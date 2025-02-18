@@ -13,9 +13,16 @@ export async function verifyPageTitle(page, title){
 	await expect(page).toHaveTitle(title);
 }
 
-export async function verifyModalTitle(page, modalTitle){
-		const actualTitle = await page.locator(".modal-header").innerText();
-		assert.strictEqual(actualTitle, modalTitle, `Modal title is '${actualTitle}', but expected is '${modalTitle}'`)
+export async function verifyModalTitle(page, modalTitle, waitFor=false){
+	let actualTitle;
+	if ( waitFor ){
+		try{
+			actualTitle = await page.locator(`//*[contains(@class,".modal-header") and text()="${modalTitle}"]`);
+			return
+		} catch(err){}
+	}
+	actualTitle = await page.locator(".modal-header").innerText();
+	assert.strictEqual(actualTitle, modalTitle, `Modal title is '${actualTitle}', but expected is '${modalTitle}'`)
 }
 
 export async function closeCookiesModal(page, action="agree"){
@@ -143,3 +150,68 @@ export async function clickButtonInsideNotification(page, buttonText){
 	const buttonLocator = `//div[contains(@class,"notification-container")]//button[text()="${buttonText}"]`
 	await page.locator(buttonLocator).click();
 }
+
+// top bar
+export async function openFromMenu(page, option){
+	await page.locator(locators.topBar.hamburger).waitFor();
+	page.locator(locators.topBar.hamburger).click();
+	const optionLocator = `//*[@id="menu"]/button[text()="${option}"]`
+	page.locator(optionLocator).click();
+}
+
+export async function verifyThatMenuContainsTheseOptions(page, options){
+	await page.locator(locators.topBar.hamburger).waitFor();
+	await page.locator(locators.topBar.hamburger).click();
+	// wait for first option to be visible
+	await page.locator("#menu button:nth-child(2)").waitFor();
+
+	const allElements = await page.locator("#menu button").all();
+	const optionsFromPage = []
+	for ( const el of allElements){
+		const text = await el.innerText();
+		optionsFromPage.push(text)
+	}
+	options.forEach((o) => {
+		if ( o.startsWith("Toggle") ){ 
+			let status = false
+			for ( const ofp of optionsFromPage ){
+				if ( ofp.startsWith(o) ) { status = true;break }
+			}
+			if ( !status ){
+				assert(false,`Options from page:\n${optionsFromPage}\n\noptions expected:\n${options}\n\nOptions check failed on ${o}!`);
+			}
+		} else {
+			assert(optionsFromPage.includes(o),`Options from page:\n${optionsFromPage}\n\noptions expected:\n${options}\n\nOptions check failed on ${o}!`);
+		}
+	})
+}
+
+// accounts
+export async function createNewUser(page, login, email, password, expectedNotification){
+	// open modal
+	await openFromMenu(page, "Login / Register");
+	await page.locator(locators.modals.login.register).click();
+	await verifyModalTitle(page, "Register - Write.JS", true);
+	await page.waitForTimeout(100)
+
+	// fill form
+	await page.locator(locators.modals.register.login).fill(login);
+	await page.locator(locators.modals.register.email).fill(email);
+	await page.locator(locators.modals.register.password).fill(password);
+
+	// submit form
+	await page.locator(locators.modals.register.submit).click();
+	await page.waitForTimeout(1200)
+
+	// verify notification
+	await verifyThatNotificationWithTextExists(page, expectedNotification, false);
+
+}
+
+
+export async function verifyInputValue(page, locator, value){
+	const actualValue = await page.locator(locator).inputValue();
+	assert(actualValue === value, `Input's '${locator}' value is '${actualValue}' not '${value}'`);
+}
+
+

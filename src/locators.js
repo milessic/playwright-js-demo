@@ -14,7 +14,16 @@ export const editor = {
 
 
 export const modals = {
-	"close": "#modal  .close-button"
+	"close": "#modal  .close-button",
+	register: {
+		login: "#account-register-username",
+		password: "#account-register-password",
+		email: "#account-register-email",
+		submit: `//button[text()="Register"]`
+	},
+	login: {
+		register: `//button[text()="Create account!"]`
+	}
 }
 
 export const cookieModal = {
@@ -30,3 +39,4 @@ export const notifications = {
 	"notificationContainer": ".notification-container",
 	"notificationText": ".notification-text"
 }
+

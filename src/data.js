@@ -21,5 +21,10 @@ export const data = {
 		"content": {
 			content: " For this action, you need to consent to store data! Change Settings",
 		}
+	},
+	menuOptions: {
+		loggedInUser: ["Create New Document", "Open Document", "Import Document", "Account", "Load Remote notebook", "Export as Markdown", "Copy as Markdown", "Export", "Export as PDF", "Dark Mode", "Toggle Spell Check", "Toggle Formatting", "Toggle Autosave", "Clear localStorage", "Export Notebook"],
+		notLoggedInUser: ["Create New Document", "Open Document", "Import Document", "Login / Register", "Export as Markdown", "Copy as Markdown", "Export", "Export as PDF", "Dark Mode", "Toggle Spell Check", "Toggle Formatting", "Toggle Autosave", "Clear localStorage", "Export Notebook"]
+		
 	}
 }
