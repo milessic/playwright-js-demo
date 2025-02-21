@@ -30,20 +30,20 @@ export async function closeCookiesModal(page, action="agree"){
 	 * allowed 'actions': ['agree', 'disagree', 'close']
 	 */
 	// Verify that Modal is opened
-	verifyModalTitle(page, data.modals.cookies.title)
+	await verifyModalTitle(page, data.modals.cookies.title)
 	const agreeCountStart = await page.locator(locators.cookieModal.agree).count()
 	assert(agreeCountStart === 1, `Cookies Modal: agree button count is not 1, but ${agreeCountStart}`)
 	// Agree
 	if ( action === 'agree' ){
-		page.locator(locators.cookieModal.agree).click();
+		await page.locator(locators.cookieModal.agree).click();
 	
 	// Disagree
 	} else if ( action === 'disagree' ){
-		page.locator(locators.cookieModal.disagree).click();
+		await page.locator(locators.cookieModal.disagree).click();
 
 	// Close
 	} else if ( action === 'close' ){
-		closeModal(page, data.modals.cookies.title);
+		await closeModal(page, data.modals.cookies.title);
 	}
 	// verify that modal is closed
 	try {
@@ -52,11 +52,33 @@ export async function closeCookiesModal(page, action="agree"){
 		throw new Error(`${err}\n\nCookies Modal: Cannot verify that modal is closed`)
 	}
 }
-export async function closeModal(page, modalTitle=""){
+export async function closeModal(page, modalTitle="", closeAll=true){
+	if (page.isClosed()) {
+    console.warn("Page is closed, cannot close modal.");
+    return;
+	}
 	if ( modalTitle ) {
 		await verifyModalTitle(page, modalTitle);
+		await page.locator(locators.modals.close).click();
+	} else {
+		await page.evaluate("closeAllModals()")
 	}
-	await page.locator(locators.modals.close).click();
+	const allModals = await page.locator(locators.modals.close).all();
+
+	const reversedModals = [];
+	for (const m of allModals){
+		reversedModals.push(allModals.pop());
+	}
+
+	if ( !allModals.length){return}
+	for (const l of reversedModals){
+		try{
+			await l.click();
+		} catch (err){
+			continue;
+		}
+	}
+	if ( closeAll ) { await closeModal(page, modalTitle, closeAll);}
 }
 export async function verifyTopBarElementsAreVisibleForDesktop(page){
 	await verifyThatElementsFromScopeAreVisible(page, locators.topBar);
@@ -121,6 +143,13 @@ export async function waitForAllNotificationsToBeClosed(page){
 	}
 }
 
+
+export async function waitForNotification(page, notificationText){
+	const locator = `//div[contains(@class, "notification-container") and descendant-or-self::text()[contains(.,"${notificationText}")]]`;
+	await page.locator(locator).waitFor();
+}
+
+
 export async function verifyThatNotificationWithTextExists(page, notificationText, includeNewLine=false){
 	// verify that at least 1 notification is visible
 	assert(await getNotificationCount(page, true), "No notification detected!");
@@ -154,9 +183,11 @@ export async function clickButtonInsideNotification(page, buttonText){
 // top bar
 export async function openFromMenu(page, option){
 	await page.locator(locators.topBar.hamburger).waitFor();
-	page.locator(locators.topBar.hamburger).click();
-	const optionLocator = `//*[@id="menu"]/button[text()="${option}"]`
-	page.locator(optionLocator).click();
+	const ls = [locators.topBar.hamburger, `//*[@id="menu"]/button[text()="${option}"]`];
+	ls.forEach( async (l) =>{
+		await page.locator(l).click();
+	}
+	);
 }
 
 export async function verifyThatMenuContainsTheseOptions(page, options){
@@ -188,6 +219,7 @@ export async function verifyThatMenuContainsTheseOptions(page, options){
 
 // accounts
 export async function createNewUser(page, login, email, password, expectedNotification){
+	// FIXME this tc is flaky
 	// open modal
 	await openFromMenu(page, "Login / Register");
 	await page.locator(locators.modals.login.register).click();
@@ -209,9 +241,48 @@ export async function createNewUser(page, login, email, password, expectedNotifi
 }
 
 
+export async function loginWithLoginAndPassword(page, login, password, skipLoginCheck=false){
+	await openFromMenu(page, "Login / Register");
+	// fill login and click ok
+	await page.locator(locators.modals.login.login).fill(login);
+	await page.locator(locators.modals.login.password).fill(password);
+	await page.locator(locators.modals.login.submit).click();
+
+	// login check
+	if ( skipLoginCheck ) { return }
+	await page.locator(locators.notifications.notificationLogin).waitFor();
+	await page.waitForTimeout(2500); // this is page design
+	await closeModal(page);
+
+}
+
+export async function changePassword(page, oldPassword, newPassword){
+	await openFromMenu(page, "Account");
+	await page.locator(locators.modals.account.oldPassword).fill(oldPassword);
+	await page.locator(locators.modals.account.newPassword).fill(newPassword);
+	await page.locator(locators.modals.account.updatePasswordBtn).click();
+	await waitForNotification(page, "Password changed succesfully");
+}
+
 export async function verifyInputValue(page, locator, value){
 	const actualValue = await page.locator(locator).inputValue();
 	assert(actualValue === value, `Input's '${locator}' value is '${actualValue}' not '${value}'`);
 }
 
+
+export async function logOut(page){
+	await openFromMenu(page, "Account");
+	await page.locator(locators.modals.account.logout).click();
+	await waitForNotification(page, "You have been logged out.");
+}
+
+export async function deleteAccount(page, password){
+	await openFromMenu(page, "Account");
+	await page.locator(locators.modals.account.currentPassword).fill(password);
+	await page.locator(locators.modals.account.areYouSure).click();
+	page.on('dialog', dialog => dialog.accept());
+
+	await page.locator(locators.modals.account.deleteBtn).click();
+	await waitForNotification(page, "Your account is deleted.");
+}
 

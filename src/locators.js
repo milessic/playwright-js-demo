@@ -22,7 +22,19 @@ export const modals = {
 		submit: `//button[text()="Register"]`
 	},
 	login: {
-		register: `//button[text()="Create account!"]`
+		login: "#login",
+		password: "#password",
+		register: `//button[text()="Create account!"]`,
+		submit: 'button[type="submit"]'
+	},
+	account: {
+		logout: `//button[text()="Logout"]`,
+		oldPassword: "#old_password",
+		newPassword: "#new_password",
+		updatePasswordBtn: `//button[text()="Update password"]`,
+		currentPassword: "#password",
+		areYouSure: "#are_you_sure",
+		deleteBtn: '#form-delete-account button[type="submit"]',
 	}
 }
 
@@ -37,6 +49,8 @@ export const cookieModal = {
 
 export const notifications = {
 	"notificationContainer": ".notification-container",
-	"notificationText": ".notification-text"
+	"notificationText": ".notification-text",
+	"notificationLogin":  `//div[contains(@class, "notification-container") and descendant-or-self::text()[contains(.,"You logged in.")]]`
+	
 }
 
