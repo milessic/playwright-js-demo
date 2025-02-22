@@ -130,3 +130,4 @@ dist
 .pnp.*
 playwright-report/*
 *playwright-report*
+test-results
