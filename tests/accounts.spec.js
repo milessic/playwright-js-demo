@@ -102,3 +102,32 @@ test("can_update_password_login_with_it_and_delete_account", async ( { page }) =
 	
 })
 
+// wrong password
+test("cannot_login_with_wrong_password", async ( { page }) => {
+	await writer.openWriterJs(page);
+	await writer.closeCookiesModal(page);
+	await writer.loginWithLoginAndPassword(page, data.users.active.login, data.users.notExisting.password, true);
+	await writer.waitForNotification(page, `Invalid Password for user `);
+})
+
+// user doesn't exist
+test("cannot_login_with_not_existing_user", async ( { page }) => {
+	await writer.openWriterJs(page);
+	await writer.closeCookiesModal(page);
+	await writer.loginWithLoginAndPassword(page, data.users.notExisting.login, data.users.notExisting.password, true);
+	await writer.waitForNotification(page, "Cannot login with this login! Try again!");
+})
+
+
+// user locked in
+test("will_lock_in_after_failed_attempts", async ( { page, browserName }) => {
+	test.skip(browserName != "chromium", "This is one-browser test only");
+	await writer.openWriterJs(page);
+	await writer.closeCookiesModal(page);
+	for ( let i=0; i< 4;i++){
+		await writer.loginWithLoginAndPassword(page, data.users.forLock.login, data.users.notExisting.password, true);
+		await writer.waitForNotification(page, `Invalid Password for user `);
+	}
+	await writer.loginWithLoginAndPassword(page, data.users.forLock.login, data.users.notExisting.password, true);
+	await writer.waitForNotification(page, `Please wait 15 minutes and try again.`);
+})

@@ -32,6 +32,14 @@ export const data = {
 			login: 'test123',
 			password: 'qweasdzxc123'
 			
+		}, 
+		notExisting: {
+			login: 'test123fasidjasojdsoidjadj',
+			password: 'qweasdzxc123asddd'
+		},
+		forLock: {
+			login: 'test009',
+			password: 'qweasdzxc123asddd'
 		}
 	}
 }

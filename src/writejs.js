@@ -246,6 +246,7 @@ export async function loginWithLoginAndPassword(page, login, password, skipLogin
 	// fill login and click ok
 	await page.locator(locators.modals.login.login).fill(login);
 	await page.locator(locators.modals.login.password).fill(password);
+	await page.waitForTimeout(300); // this is page design
 	await page.locator(locators.modals.login.submit).click();
 
 	// login check
