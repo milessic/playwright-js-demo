@@ -148,7 +148,7 @@ test("can_update_password_login_with_it_and_delete_account", async ( { page }) =
 // wrong password
 test("cannot_login_with_wrong_password", async ( { page }) => {
 	await writer.openWriterJs(page);
-	await writer.loginWithLoginAndPassword(page, data.users.active.login, data.users.notExisting.password, true);
+	await writer.loginWithLoginAndPassword(page, data.users.active2.login, data.users.notExisting.password, true);
 	await writer.waitForNotification(page, `Invalid Password for user `);
 })
 

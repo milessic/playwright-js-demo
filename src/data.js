@@ -38,7 +38,11 @@ export const data = {
 			login: 'test123',
 			password: 'qweasdzxc123',
 			email: 'test123@writer.io'
-			
+		}, 
+		active2: {
+			login: 'test321',
+			password: 'qweasdzxc123',
+			email: 'test321@writer.io'
 		}, 
 		notExisting: {
 			login: 'test123fasidjasojdsoidjadj',
