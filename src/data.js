@@ -26,5 +26,12 @@ export const data = {
 		loggedInUser: ["Create New Document", "Open Document", "Import Document", "Account", "Load Remote notebook", "Export as Markdown", "Copy as Markdown", "Export", "Export as PDF", "Dark Mode", "Toggle Spell Check", "Toggle Formatting", "Toggle Autosave", "Clear localStorage", "Export Notebook"],
 		notLoggedInUser: ["Create New Document", "Open Document", "Import Document", "Login / Register", "Export as Markdown", "Copy as Markdown", "Export", "Export as PDF", "Dark Mode", "Toggle Spell Check", "Toggle Formatting", "Toggle Autosave", "Clear localStorage", "Export Notebook"]
 		
+	},
+	users: {
+		active: {
+			login: 'test123',
+			password: 'qweasdzxc123'
+			
+		}
 	}
 }

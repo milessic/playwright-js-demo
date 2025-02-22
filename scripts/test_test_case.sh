@@ -6,11 +6,11 @@ FAILED=0
 PASSED=0
 
 run_test(){
-	echo "CI=1 npx playwright test $@ --workers 4"
 	CI=1 npx playwright test "$@" --workers 4
+	echo "code: $?"
 	return $?
 }
-for i in $(seq 1 10); 
+for i in $(seq 1 100); 
 	do
 		run_test "$@"
 		LAST_CODE=$?

@@ -27,6 +27,16 @@ test("menu contains proper options for not logged in user", async ( { page } ) =
 	await writer.verifyThatMenuContainsTheseOptions(page, data.menuOptions.notLoggedInUser);
 
 })
+//
+// menu options for logged-in user
+test("menu contains proper options for logged in user", async ( { page } ) => {
+	await writer.openWriterJs(page);
+	await writer.closeCookiesModal(page);
+
+	await writer.loginWithLoginAndPassword(page, data.users.active.login, data.users.active.password)
+	await writer.verifyThatMenuContainsTheseOptions(page, data.menuOptions.loggedInUser);
+
+})
 
 // create account - OK
 test("user can register and login with success",
@@ -61,6 +71,7 @@ test("user can register and login with success",
 })
 
 // update password, delete account
+//
 test("can_update_password_login_with_it_and_delete_account", async ( { page }) => {
 	await writer.openWriterJs(page);
 	await writer.closeCookiesModal(page);
