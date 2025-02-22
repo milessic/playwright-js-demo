@@ -70,8 +70,59 @@ test("user can register and login with success",
 
 })
 
+// create account - login exists 
+test("cannot_create_account_with_taken_username",
+	{
+		annotation: {
+			type: 'description',
+			description: `Register > Check notification > Click notification > Login > check if Welcome modal is displayed`
+		}
+	}, 
+	async ( { page } ) => {
+	await writer.openWriterJs(page);
+	await writer.closeCookiesModal(page);
+
+	await writer.createNewUser(page, data.users.active.login, 'sdjfa@asdasdd.com', data.users.active.password, data.notifications.register.usernameTaken);
+
+})
+
+// create account - email exists 
+test("cannot_create_account_with_taken_email",
+	{
+		annotation: {
+			type: 'description',
+			description: `Register > Check notification > Click notification > Login > check if Welcome modal is displayed`
+		}
+	}, 
+	async ( { page } ) => {
+	await writer.openWriterJs(page);
+	await writer.closeCookiesModal(page);
+
+	await writer.createNewUser(page, 'asdsasgasff3rf3', data.users.active.email, data.users.active.password, data.notifications.register.emailTaken);
+	})
+
+// create account - password to short 
+test("cannot_create_account_with_too_short_password", 
+	async ( { page } ) => {
+	await writer.openWriterJs(page);
+	await writer.closeCookiesModal(page);
+
+	const userData = generators.generateValidRegisterData();
+	await writer.createNewUser(page, userData.login, userData.email, '123456', data.notifications.register.passwordTooShort);
+})
+
+// create account - password to long
+test("cannot_create_account_with_too_long_password",
+	async ( { page } ) => {
+	await writer.openWriterJs(page);
+	await writer.closeCookiesModal(page);
+
+	const userData = generators.generateValidRegisterData();
+	await writer.createNewUser(page, userData.login, userData.email, 'x'.repeat(36), data.notifications.register.passwordTooLong);
+
+})
+
 // update password, delete account
-//
 test("can_update_password_login_with_it_and_delete_account", async ( { page }) => {
 	await writer.openWriterJs(page);
 	await writer.closeCookiesModal(page);

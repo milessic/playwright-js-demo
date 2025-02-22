@@ -20,6 +20,12 @@ export const data = {
 		},
 		"content": {
 			content: " For this action, you need to consent to store data! Change Settings",
+		},
+		register: {
+			emailTaken: `There were some problems with register:{\"detail\": [[\"This E-mail address is already taken!\"]]}`,
+			usernameTaken: `There were some problems with register:{\"detail\": [[\"Username is already taken! Use other one\"]]}`,
+			passwordTooShort: `There were some problems with register:{\"detail\": [\"[\\\"Password is too short! It has to be at least 7 characters long!\\\"]\"]}`,
+			passwordTooLong: `There were some problems with register:{\"detail\": [\"[\\\"Password is too long! It has to be maximum 32 characters long!\\\"]\"]}`,
 		}
 	},
 	menuOptions: {
@@ -30,7 +36,8 @@ export const data = {
 	users: {
 		active: {
 			login: 'test123',
-			password: 'qweasdzxc123'
+			password: 'qweasdzxc123',
+			email: 'test123@writer.io'
 			
 		}, 
 		notExisting: {
@@ -43,3 +50,4 @@ export const data = {
 		}
 	}
 }
+
