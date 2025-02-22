@@ -7,7 +7,7 @@ import assert from 'assert';
 
 export async function openWriterJs(page, autoConfirmCookiesModal=true){
 	await page.goto(config.url);
-	if ( autoConfirmCookiesModal) { await closeCookiesModal() }
+	if ( autoConfirmCookiesModal) { await closeCookiesModal(page) }
 }
 
 export async function verifyPageTitle(page, title){
@@ -62,7 +62,12 @@ export async function closeModal(page, modalTitle="", closeAll=true){
 		await verifyModalTitle(page, modalTitle);
 		await page.locator(locators.modals.close).click();
 	} else {
-		await page.evaluate("closeAllModals()")
+		await page.waitForFunction(() => typeof closeAllModals === 'function');
+		await page.waitForTimeout(1000);
+		await page.evaluate(() => {
+			closeAllModals()
+		}
+		)
 	}
 	const allModals = await page.locator(locators.modals.close).all();
 
@@ -73,11 +78,7 @@ export async function closeModal(page, modalTitle="", closeAll=true){
 
 	if ( !allModals.length){return}
 	for (const l of reversedModals){
-		try{
-			await l.click();
-		} catch (err){
-			continue;
-		}
+		await l.click();
 	}
 	if ( closeAll ) { await closeModal(page, modalTitle, closeAll);}
 }
@@ -97,7 +98,9 @@ export async function fillDocumentName(page, docName){
 }
 
 export async function fillDocumentContent(page, content){
-	await page.locator(locators.editor.editor).fill(content);
+	await page.locator(locators.editor.editor).click(content);
+	await page.keyboard.type(content);
+	await page.keyboard.type(" ");
 }
 
 export async function saveDocument(page){
@@ -117,12 +120,19 @@ export async function verifyThatAutosaveIs(page, ...allowedSettings){
 	expect(allowedSettings).toContain(value)
 }
 
-export async function setAutosave(page, state){
+export async function setAutosave(page, autosaveState){
 	/*
 	 * set "1" or "0"
 	 */
-	await page.evaluate(() => localStorage.setItem("__autosave__", state))
+	if ( autosaveState === "1"){
+		await page.evaluate(() => localStorage.setItem("__autosave__", "1"));
+	} else if ( autosaveState === "0") {
+		await page.evaluate(() => localStorage.setItem("__autosave__", "0"))
+	} else {
+		throw new Error("autosave has to be 1 or 0 and type of str")
+	}
 	await page.reload();
+	await closeModal(page);
 }
 
 export async function verifyDocumentNameIs(page, docName){
@@ -298,7 +308,10 @@ export async function deleteAccount(page, password){
 
 export async function verifyUserDataSection(page, userData){
 	await openFromMenu(page, "Account");
+	await page.waitForTimeout(100);
 	const userDataText = await page.locator(locators.modals.account.userInfo).innerText()
 	const expectedUserDataText = `${userData.login}\n${userData.email}`
 	assert(userDataText == expectedUserDataText, `userText is ${userDataText}\ninstead of desired\n${expectedUserDataText}`)
 }
+
+

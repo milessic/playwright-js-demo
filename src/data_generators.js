@@ -23,3 +23,11 @@ export function generateValidRegisterData(){
 		password: baseStr
 	}
 }
+
+export function generateDocumentContent(){
+	return {
+		docName: generateRandomStr(14) + ".test",
+		docContent: generateRandomStr(500)
+	}
+}
+

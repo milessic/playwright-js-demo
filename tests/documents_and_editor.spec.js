@@ -1,4 +1,5 @@
 // @ts-check
+import * as generators from '../src/data_generators.js';
 import * as writer from '../src/writejs.js';
 import { data } from '../src/data.js';
 import { test } from '@playwright/test';
@@ -72,4 +73,23 @@ test("verify that previously opened document is opened for returning user", asyn
 // autosave tests
 test("autosave_saves_when_enabled", async ({ page }) =>{
 	await writer.openWriterJs(page);
+
+	await writer.loginWithLoginAndPassword(page, data.users.active.login, data.users.active.password)
+
+	await writer.setAutosave(page, "1");
+
+	// verfiy that user is notified regarding autosave 
+	await writer.verifyThatMenuContainsTheseOptions(page, ["Toggle Autosave (It's on now)"]);
+	
+	// verify that autosave works
+	const docData = generators.generateDocumentContent();
+	await writer.fillDocumentName(page, docData.docName);
+	await writer.fillDocumentContent(page, docData.docContent);
+
+	await page.waitForTimeout(500);
+	await page.reload();
+	await writer.verifyDocumentNameIs(page, docData.docName);
+	await writer.verifyDocumentContentIs(page, docData.docContent);
+
+
 })
