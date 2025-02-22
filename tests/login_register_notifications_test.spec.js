@@ -20,7 +20,6 @@ test.afterEach(async ({ page }, testInfo) => {
 // Check if not-logged user has login/register notification
 test("not logged user is notified to login or register", async ( { page } ) => {
 	await writer.openWriterJs(page);
-	await writer.closeCookiesModal(page);
 
 	// verify notification
 	await writer.verifyThatNotificationWithTextExists(page, data.notifications.loginOrRegister.content);
@@ -29,7 +28,6 @@ test("not logged user is notified to login or register", async ( { page } ) => {
 // Check if buttons on login/register notification works as expected
 test("not logged user can open login and register from notification", async ( { page } ) => {
 	await writer.openWriterJs(page);
-	await writer.closeCookiesModal(page);
 
 	// verify notification is displayed
 	await writer.verifyThatNotificationWithTextExists(page, data.notifications.loginOrRegister.content);

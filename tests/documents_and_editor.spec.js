@@ -24,7 +24,7 @@ test("User can create new document but can't save without consent", async ( { pa
 	const docName = "Test Document";
 	const docContent = "Lorem Ipsym Dolor poziomki";
 
-	await writer.openWriterJs(page);
+	await writer.openWriterJs(page, false);
 	await writer.closeCookiesModal(page, "disagree");
 
 	// verify autosave is turned off / not set
@@ -53,7 +53,6 @@ test("verify that previously opened document is opened for returning user", asyn
 	const docContent = "Lorem Ipsym Dolor poziomki";
 
 	await writer.openWriterJs(page);
-	await writer.closeCookiesModal(page);
 
 	// fill document details
 	await writer.fillDocumentName(page, docName);
@@ -70,3 +69,7 @@ test("verify that previously opened document is opened for returning user", asyn
 	await writer.verifyDocumentContentIs(page, docContent);
 })
 
+// autosave tests
+test("autosave_saves_when_enabled", async ({ page }) =>{
+	await writer.openWriterJs(page);
+})

@@ -30,7 +30,6 @@ test('has title', async ( { page } ) => {
 // Check if page contains all needed elements
 test("top bar has all needed elements", async ( { page } ) => {
 	await writer.openWriterJs(page);
-	await writer.closeCookiesModal(page);
 
 	// verify topBar
 	await writer.verifyTopBarElementsAreVisibleForDesktop(page);

@@ -22,7 +22,6 @@ test.afterEach(async ({ page }, testInfo) => {
 // menu options for non-logged user
 test("menu contains proper options for not logged in user", async ( { page } ) => {
 	await writer.openWriterJs(page);
-	await writer.closeCookiesModal(page);
 
 	await writer.verifyThatMenuContainsTheseOptions(page, data.menuOptions.notLoggedInUser);
 
@@ -31,7 +30,6 @@ test("menu contains proper options for not logged in user", async ( { page } ) =
 // menu options for logged-in user
 test("menu contains proper options for logged in user", async ( { page } ) => {
 	await writer.openWriterJs(page);
-	await writer.closeCookiesModal(page);
 
 	await writer.loginWithLoginAndPassword(page, data.users.active.login, data.users.active.password)
 	await writer.verifyThatMenuContainsTheseOptions(page, data.menuOptions.loggedInUser);
@@ -48,7 +46,6 @@ test("user can register and login with success",
 	}, 
 	async ( { page } ) => {
 	await writer.openWriterJs(page);
-	await writer.closeCookiesModal(page);
 
 	const userData = generators.generateValidRegisterData();
 	await writer.createNewUser(page, userData.login, userData.email, userData.password, `You can login as ${userData.login}!Login now!`);
@@ -80,7 +77,6 @@ test("cannot_create_account_with_taken_username",
 	}, 
 	async ( { page } ) => {
 	await writer.openWriterJs(page);
-	await writer.closeCookiesModal(page);
 
 	await writer.createNewUser(page, data.users.active.login, 'sdjfa@asdasdd.com', data.users.active.password, data.notifications.register.usernameTaken);
 
@@ -96,7 +92,6 @@ test("cannot_create_account_with_taken_email",
 	}, 
 	async ( { page } ) => {
 	await writer.openWriterJs(page);
-	await writer.closeCookiesModal(page);
 
 	await writer.createNewUser(page, 'asdsasgasff3rf3', data.users.active.email, data.users.active.password, data.notifications.register.emailTaken);
 	})
@@ -105,7 +100,6 @@ test("cannot_create_account_with_taken_email",
 test("cannot_create_account_with_too_short_password", 
 	async ( { page } ) => {
 	await writer.openWriterJs(page);
-	await writer.closeCookiesModal(page);
 
 	const userData = generators.generateValidRegisterData();
 	await writer.createNewUser(page, userData.login, userData.email, '123456', data.notifications.register.passwordTooShort);
@@ -115,7 +109,6 @@ test("cannot_create_account_with_too_short_password",
 test("cannot_create_account_with_too_long_password",
 	async ( { page } ) => {
 	await writer.openWriterJs(page);
-	await writer.closeCookiesModal(page);
 
 	const userData = generators.generateValidRegisterData();
 	await writer.createNewUser(page, userData.login, userData.email, 'x'.repeat(36), data.notifications.register.passwordTooLong);
@@ -125,7 +118,6 @@ test("cannot_create_account_with_too_long_password",
 // update password, delete account
 test("can_update_password_login_with_it_and_delete_account", async ( { page }) => {
 	await writer.openWriterJs(page);
-	await writer.closeCookiesModal(page);
 	const userData = generators.generateValidRegisterData();
 	// create new user
 	await writer.createNewUser(page, userData.login, userData.email, userData.password, `You can login as ${userData.login}!Login now!`);
@@ -156,7 +148,6 @@ test("can_update_password_login_with_it_and_delete_account", async ( { page }) =
 // wrong password
 test("cannot_login_with_wrong_password", async ( { page }) => {
 	await writer.openWriterJs(page);
-	await writer.closeCookiesModal(page);
 	await writer.loginWithLoginAndPassword(page, data.users.active.login, data.users.notExisting.password, true);
 	await writer.waitForNotification(page, `Invalid Password for user `);
 })
@@ -164,7 +155,6 @@ test("cannot_login_with_wrong_password", async ( { page }) => {
 // user doesn't exist
 test("cannot_login_with_not_existing_user", async ( { page }) => {
 	await writer.openWriterJs(page);
-	await writer.closeCookiesModal(page);
 	await writer.loginWithLoginAndPassword(page, data.users.notExisting.login, data.users.notExisting.password, true);
 	await writer.waitForNotification(page, "Cannot login with this login! Try again!");
 })
@@ -174,11 +164,17 @@ test("cannot_login_with_not_existing_user", async ( { page }) => {
 test("will_lock_in_after_failed_attempts", async ( { page, browserName }) => {
 	test.skip(browserName != "chromium", "This is one-browser test only");
 	await writer.openWriterJs(page);
-	await writer.closeCookiesModal(page);
 	for ( let i=0; i< 4;i++){
 		await writer.loginWithLoginAndPassword(page, data.users.forLock.login, data.users.notExisting.password, true);
 		await writer.waitForNotification(page, `Invalid Password for user `);
 	}
 	await writer.loginWithLoginAndPassword(page, data.users.forLock.login, data.users.notExisting.password, true);
 	await writer.waitForNotification(page, `Please wait 15 minutes and try again.`);
+})
+
+// verfiy user data section
+test('user_information_section_contains_all_needed_data', async ({ page }) =>{
+	await writer.openWriterJs(page);
+	await writer.loginWithLoginAndPassword(page, data.users.active.login, data.users.active.password);
+	await writer.verifyUserDataSection(page, data.users.active);
 })

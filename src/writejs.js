@@ -5,8 +5,9 @@ import * as locators from './locators.js'
 import assert from 'assert';
 
 
-export async function openWriterJs(page){
+export async function openWriterJs(page, autoConfirmCookiesModal=true){
 	await page.goto(config.url);
+	if ( autoConfirmCookiesModal) { await closeCookiesModal() }
 }
 
 export async function verifyPageTitle(page, title){
@@ -114,6 +115,14 @@ export async function verifyDocumentDoesntExistsInLocalStorage(page, docName){
 export async function verifyThatAutosaveIs(page, ...allowedSettings){
 	const value = await page.evaluate(() => localStorage.getItem("__autosave__"))
 	expect(allowedSettings).toContain(value)
+}
+
+export async function setAutosave(page, state){
+	/*
+	 * set "1" or "0"
+	 */
+	await page.evaluate(() => localStorage.setItem("__autosave__", state))
+	await page.reload();
 }
 
 export async function verifyDocumentNameIs(page, docName){
@@ -287,3 +296,9 @@ export async function deleteAccount(page, password){
 	await waitForNotification(page, "Your account is deleted.");
 }
 
+export async function verifyUserDataSection(page, userData){
+	await openFromMenu(page, "Account");
+	const userDataText = await page.locator(locators.modals.account.userInfo).innerText()
+	const expectedUserDataText = `${userData.login}\n${userData.email}`
+	assert(userDataText == expectedUserDataText, `userText is ${userDataText}\ninstead of desired\n${expectedUserDataText}`)
+}

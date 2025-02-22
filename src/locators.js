@@ -35,6 +35,7 @@ export const modals = {
 		currentPassword: "#password",
 		areYouSure: "#are_you_sure",
 		deleteBtn: '#form-delete-account button[type="submit"]',
+		userInfo: "#user-info pre",
 	}
 }
 
